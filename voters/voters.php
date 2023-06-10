@@ -15,8 +15,9 @@
 
         .card {
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out;
+            border: none;
         }
 
         .card:hover {
@@ -25,26 +26,32 @@
 
         .card-title {
             font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
         }
 
         .card-text {
             color: #6c757d;
+            margin-bottom: 20px;
         }
 
         .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+            transition: background-color 0.3s ease-in-out;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .btn-primary:hover {
-            background-color: #0069d9;
-            border-color: #0069d9;
+            background-color: #534dff;
+            border-color: #534dff;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2 class="text-center mb-4">Voters</h2>
+        <h2 class="text-center mb-4">Voters Portal</h2>
 
         <div class="row">
             <div class="col-md-6">
