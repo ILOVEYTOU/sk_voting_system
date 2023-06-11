@@ -1,6 +1,19 @@
 <?php
 session_start();
-include('dbconn.php');
+
+// Database configuration
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "sk_voting_system";
+
+// Create a connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $voter_id = $_POST['voter_id'];
@@ -37,14 +50,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Voter Registration</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
         }
 
         .container {
-            max-width: 600px;
-            margin-top: 50px;
+            max-width: 500px;
+            margin: 50px auto;
         }
 
         .card {
@@ -52,8 +67,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .form-control {
-            border-radius: 10px;
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .form-group input {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            width: 100%;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #6c63ff;
+        }
+
+        .invalid-feedback {
+            color: #dc3545;
         }
 
         .btn-primary {
@@ -62,18 +99,100 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transition: background-color 0.3s ease-in-out;
             font-weight: 600;
             text-transform: uppercase;
-            border-radius: 10px;
+            border-radius: 8px;
+            padding: 12px 30px;
         }
 
         .btn-primary:hover {
             background-color: #534dff;
             border-color: #534dff;
         }
+
+        h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            color: #6c63ff;
+        }
+
+        .alert {
+            border-radius: 8px;
+        }
+
+        .alert-success {
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+            color: #0f5132;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .voting-system-icon {
+            font-size: 64px;
+            color: #6c63ff;
+            margin-bottom: 20px;
+        }
+
+        /* Custom Styles */
+        .sk-color {
+            --primary-color: #FF4081; /* Pink */
+            --primary-dark-color: #E91E63; /* Dark Pink */
+            --text-color: #FFFFFF; /* White */
+            --success-color: #d1e7dd;
+            --success-border-color: #badbcc;
+            --success-text-color: #0f5132;
+            --error-color: #f8d7da;
+            --error-border-color: #f5c6cb;
+            --error-text-color: #721c24;
+        }
+
+        .sk-color .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .sk-color .btn-primary:hover {
+            background-color: var(--primary-dark-color);
+            border-color: var(--primary-dark-color);
+        }
+
+        .sk-color h2 {
+            color: var(--primary-color);
+        }
+
+        .sk-color .voting-system-icon {
+            color: var(--primary-color);
+        }
+
+        .sk-color .alert-success {
+            background-color: var(--success-color);
+            border-color: var(--success-border-color);
+            color: var(--success-text-color);
+        }
+
+        .sk-color .alert-danger {
+            background-color: var(--error-color);
+            border-color: var(--error-border-color);
+            color: var(--error-text-color);
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2 class="text-center mb-4">Voter Registration</h2>
+    <div class="container sk-color">
+        <div class="text-center">
+            <i class="fas fa-vote-yea voting-system-icon"></i>
+            <h2>Voter Registration</h2>
+        </div>
 
         <?php if (isset($_SESSION['message'])) : ?>
             <div class="alert alert-success" role="alert">
@@ -94,42 +213,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="card">
                 <div class="card-body">
                     <form id="registrationForm" method="post">
-                        <div class="mb-3">
-                            <label for="voter_id" class="form-label">Voter ID</label>
+                        <div class="form-group">
+                            <label for="voter_id">Voter ID</label>
                             <input type="text" class="form-control" id="voter_id" name="voter_id" required pattern="[0-9]{7,}">
                             <div class="invalid-feedback">
                                 Please provide a valid voter ID (minimum 7 digits).
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
+
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
                             <input type="text" class="form-control" id="name" name="name" required>
                             <div class="invalid-feedback">
-                                Please provide your name.
+                                Please provide your full name.
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="age" class="form-label">Age</label>
+
+                        <div class="form-group">
+                            <label for="age">Age</label>
                             <input type="number" class="form-control" id="age" name="age" required min="18">
                             <div class="invalid-feedback">
                                 Please provide your age (must be 18 or above).
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
+
+                        <div class="form-group">
+                            <label for="address">Address</label>
                             <input type="text" class="form-control" id="address" name="address" required>
                             <div class="invalid-feedback">
                                 Please provide your address.
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="precinct_number" class="form-label">Precinct Number</label>
+
+                        <div class="form-group">
+                            <label for="precinct_number">Precinct Number</label>
                             <input type="text" class="form-control" id="precinct_number" name="precinct_number" required>
                             <div class="invalid-feedback">
                                 Please provide the precinct number.
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -138,7 +264,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 Thank you for registering, <?php echo $_SESSION['voter_name']; ?>!
             </div>
 
-            <a href="register.php" class="btn btn-primary">Register New User</a>
+            <div class="text-center">
+                <a href="register.php" class="btn btn-primary">Register New User</a>
+            </div>
         <?php endif; ?>
     </div>
 
